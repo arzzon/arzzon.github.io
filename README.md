@@ -21,6 +21,8 @@ _This website has been modified so that I could host it on github. Originally th
 _All those code have been removed._
 _However, the game experience remains the same._
 
+_Note: This website is not compatible with mobile._
+
 ## Let's test your speed
 
 Thanks
