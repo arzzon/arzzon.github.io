@@ -1,0 +1,17 @@
+body{
+    background-image: url("../images/bgimage.jpg");
+    background-size: cover;
+}
+
+/* for animation of an element */
+
+.error {
+    position: relative;
+    animation: shake .1s linear;
+    animation-iteration-count: 3;
+}
+
+@keyframes shake {
+    0% { left: -5px; }
+    100% { right: -5px; }
+}
