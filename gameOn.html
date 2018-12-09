@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Speedy</title>
+        <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon">
+        <!--BOOTSTRAP DEPENDENCIES-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <!-- FONT AWESOME -->
+        <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+        <!--CUSTOM STYLESHEET-->
+        <link rel="stylesheet" href="assets/css/playground.css">
+    </head>
+    <body onload="startCounter()">
+        <div class="container">
+            <div class="row">
+                <div class="col col-md-12">
+                    <!--Countdown panel-->
+                    <div id="countDownPanel">
+                        <p id="countDownNumber"></p>
+                    </div>
+                    <!--Game area-->
+                    <div id="gameArea">
+                        <div class="shape" id="square" onclick="clicked(this.id)"></div>
+                        <div class="shape" id="rectangle" onclick="clicked(this.id)"></div>
+                        <div class="shape" id="circle" onclick="clicked(this.id)"></div>
+                    </div>
+                    <!--Message Board-->
+                    <div id="messageBoard">
+                        <div id="messageLable">Congrats!!!</div>
+                        <div id="message">You have successfully completed level 1</div>
+                        <!--Buttons-->
+                        <div id="buttons">
+                            <input type="button" id="playAgain" onclick="playAgain()" class="btn btn-success" value="Play Again">
+                            <input type="button" id="nextLevel" onclick="nextLevel()" class="btn btn-info">
+                        </div>
+                    </div>
+                    <!--Player Lives-->
+                    <div id="livesBoard">
+                            <div id="livesLable">LIVES</div>
+                            <div id="lives">3</div>
+                    </div>
+                    <!--Game Level-->
+                    <div id="levelBoard">
+                        <div id="levelLable">LEVEL</div>
+                        <div id="level">1</div>
+                    </div>
+                    <!--Game Score-->
+                    <div id="scoreBoard">
+                            <div id="scoreLable">SCORE</div>
+                            <div id="score">0</div>
+                    </div>
+                    <!--USER INFO-->
+                    <div align="center" style="position:fixed;left:10px;bottom:0;">
+                        <i class="fas fa-user" style="font-size:50px;color:white;"></i>
+                        <div id="userBox" style="color:antiquewhite;font-size:150%;opacity:0.8;"></div>
+                    </div>
+                </div><!--End of col-->
+            </div><!--End of row-->
+        </div><!--End of container-->
+    </body>
+    <!--CUSTOM SCRIPT-->
+    <script type="text/javascript" src="assets/js/playground.js"></script>
+</html>
