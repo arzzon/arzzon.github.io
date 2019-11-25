@@ -1,7 +1,7 @@
 # arbaaz-khan.github.io
 
 # What is it?
-It's a simple game developed by me when I started learning web-development in college.
+It's a simple game developed by me when I started learning web-development.
 
 # What's it's name?
 Speedy
