@@ -16,6 +16,8 @@ Speedy
 
 # PLEASE CLICK ON THE FOLLOWING LINK TO PLAY THE GAME
 [http://www.speedybyak.ml]
+or
+[https://arbaaz-khan.github.io/]
 
 _This website has been modified so that I could host it on github. Originally this website is a full fledged website with backend written in php._
 _All those code have been removed._
