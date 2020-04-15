@@ -1,7 +1,7 @@
 # arbaaz-khan.github.io
 
 # What is it?
-It's a simple game developed by me when I started learning web-development.
+It's a simple game developed using HTML, CSS & JS.
 
 # What's it's name?
 Speedy
