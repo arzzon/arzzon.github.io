@@ -15,9 +15,7 @@ Speedy
 6) You can start the game by clicking at the logo.
 
 # PLEASE CLICK ON THE FOLLOWING LINK TO PLAY THE GAME
-[http://www.speedybyak.ml]
-or
-[https://arbaaz-khan.github.io/]
+[https://arzzon.github.io/]
 
 _This website has been modified so that I could host it on github. Originally this website is a full fledged website with backend written in php._
 _All those code have been removed._
