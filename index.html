@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arbaaz Khan | Cluster Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        :root {
+            --bg-base: #0f172a; 
+            --bg-panel: #1e293b; 
+            --go-color: #00ADD8;
+            --k8s-color: #326CE5;
+            --docker-color: #2496ED;
+            --python-color: #FFD43B;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            grid-template-rows: 1fr;
+            gap: 1.5rem;
+            width: calc(100vw - 3rem);
+            height: calc(100vh - 3rem);
+            max-width: 1600px;
+        }
+
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .identity {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .avatar-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--k8s-color);
+            margin: 0 auto 1.5rem auto;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(50, 108, 229, 0.2);
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .role {
+            color: var(--go-color);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .location {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .system-status {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-green 2s infinite;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 1.5rem;
+        }
+
+        .terminal {
+            grid-column: 1 / -1;
+            background: #000;
+            font-family: 'Fira Code', monospace;
+            border: 1px solid #333;
+        }
+
+        .terminal-header {
+            background: #111;
+            padding: 0.5rem 1rem;
+            margin: -1.5rem -1.5rem 1rem -1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .term-content {
+            color: #10b981;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background: #10b981;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .skill-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+        }
+
+        .skill-badge:hover {
+            border-color: var(--k8s-color);
+            background: rgba(50, 108, 229, 0.1);
+        }
+
+        .skill-badge i { font-size: 1.2rem; }
+        .go-icon { color: var(--go-color); }
+        .docker-icon { color: var(--docker-color); }
+        .k8s-icon { color: var(--k8s-color); }
+        .python-icon { color: var(--python-color); }
+
+        .pod-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-y: auto;
+        }
+
+        .pod-card {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--k8s-color);
+            padding: 1rem;
+            border-radius: 6px;
+            transition: transform 0.2s;
+        }
+        
+        .pod-card:hover {
+            transform: translateX(5px);
+            border-left-color: var(--go-color);
+        }
+
+        .pod-card h4 {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pod-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+
+        .pod-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .pod-tags span {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--bg-base);
+            border-radius: 4px;
+            color: var(--go-color);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .ingress-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .ingress-links a {
+            color: var(--text-muted);
+            font-size: 1.8rem;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .ingress-links a:hover {
+            color: var(--text-main);
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        @media (max-width: 1024px) {
+            body { overflow-y: auto; height: auto; padding: 1.5rem; }
+            .dashboard-container { grid-template-columns: 1fr; height: auto; width: 100%; }
+            .main-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        
+        <aside class="panel sidebar">
+            <div class="panel-header">
+                <i class="fa-solid fa-server"></i> Control Plane
+            </div>
+            
+            <div class="identity">
+                <div class="avatar-container">
+                    <img src="https://github.com/arzzon.png" alt="Arbaaz Khan">
+                </div>
+                <h1 class="name">Arbaaz Khan</h1>
+                <h2 class="role">Backend & Cloud-Native Eng.</h2>
+                <div class="location">
+                    <i class="fa-solid fa-location-dot"></i> Hyderabad, IN
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; text-align: center;">
+                <div class="panel-header" style="justify-content: center;">Ingress Routes</div>
+                <div class="ingress-links">
+                    <a href="https://github.com/arzzon" target="_blank"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://medium.com/@arbaazkhan083" target="_blank"><i class="fa-brands fa-medium"></i></a>
+                    <a href="mailto:arbaazkhan083@gmail.com"><i class="fa-solid fa-envelope"></i></a>
+                    <a href="https://stackoverflow.com/users/11330629/arbaaz"><i class="fa-brands fa-stack-overflow"></i></a>
+                </div>
+            </div>
+
+            <div class="system-status">
+                <div class="pulse"></div> Cluster Healthy & Ready
+            </div>
+        </aside>
+
+        <main class="main-grid">
+            
+            <div class="panel terminal">
+                <div class="terminal-header">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <div class="term-content">
+                    <div id="typewriter"></div>
+                    <span class="cursor"></span>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <i class="fa-solid fa-cubes"></i> Running Deployments
+                </div>
+                <div class="pod-list">
+                    
+                    <div class="pod-card">
+                        <h4>
+                            <span><i class="fa-solid fa-network-wired" style="color: var(--k8s-color);"></i> f5-container-ingress-services (CIS)</span>
+                            <span style="color: var(--success); font-size: 0.8rem;">Active</span>
+                        </h4>
+                        <p>Integrating F5 BIG-IP with Kubernetes and OpenShift for advanced ingress, load balancing, and multi-cluster traffic management.</p>
+                        <div class="pod-tags">
+                            <span>Go</span>
+                            <span>K8s</span>
+                            <span>BIG-IP</span>
+                        </div>
+                    </div>
+
+                    <div class="pod-card">
+                        <h4>
+                            <span><i class="fa-solid fa-server" style="color: var(--go-color);"></i> f5-ipam-controller (BNK)</span>
+                            <span style="color: var(--success); font-size: 0.8rem;">Active</span>
+                        </h4>
+                        <p>Automated IP Address Management controller for Kubernetes environments, handling seamless IPv4/IPv6 allocations. With support for 3rd party integrations like Infoblox.</p>
+                        <div class="pod-tags">
+                            <span>Go</span>
+                            <span>IPAM</span>
+                            <span>Microservices</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <i class="fa-solid fa-layer-group"></i> Container Images / Stack
+                </div>
+                <div class="skills-grid">
+                    <div class="skill-badge"><i class="fa-brands fa-golang go-icon"></i> Golang</div>
+                    <div class="skill-badge"><i class="fa-brands fa-python python-icon"></i> Python</div>
+                    <div class="skill-badge"><i class="fa-brands fa-docker docker-icon"></i> Docker</div>
+                    <div class="skill-badge"><i class="fa-solid fa-dharmachakra k8s-icon"></i> Kubernetes</div>
+                    <div class="skill-badge"><i class="fa-brands fa-redhat" style="color: #ee0000;"></i> OpenShift</div>
+                    <div class="skill-badge"><i class="fa-solid fa-network-wired" style="color: #a855f7;"></i> Microservices</div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const lines = [
+            "kubectl get nodes -o wide",
+            "NAME                 STATUS   ROLES    AGE   VERSION",
+            "aws-k8s-master-01    Ready    master   45d   v1.28.0",
+            "aws-k8s-worker-01    Ready    <none>   45d   v1.28.0",
+            "",
+            "> initializing environment...",
+            "> pulling images: [golang:1.21, python:3.11, f5-k8s-bigip-ctlr]",
+            "> applying Custom resources...",
+            "> applying RBAC...",
+            "> reconciling state with arzzon's profile...",
+            "> ingress services up. traffic routed successfully."
+        ];
+
+        let lineIndex = 0;
+        let charIndex = 0;
+        const speed = 20; 
+        const typewriterElement = document.getElementById('typewriter');
+
+        function typeWriter() {
+            if (lineIndex < lines.length) {
+                if (charIndex < lines[lineIndex].length) {
+                    typewriterElement.innerHTML += lines[lineIndex].charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter, speed);
+                } else {
+                    typewriterElement.innerHTML += "<br/>";
+                    lineIndex++;
+                    charIndex = 0;
+                    setTimeout(typeWriter, speed * 5); 
+                }
+            }
+        }
+
+        window.onload = typeWriter;
+    </script>
+</body>
+</html>
