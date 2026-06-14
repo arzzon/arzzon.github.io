@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arbaaz Khan | Cluster Dashboard</title>
+    <title>Arbaaz Khan | Cloud-Native Engineer</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
@@ -14,17 +14,17 @@
             --k8s-color: #326CE5;
             --docker-color: #2496ED;
             --python-color: #FFD43B;
+            --java-color: #f89820;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
             --success: #10b981;
+            --term-green: #22c55e;
+            --term-blue: #3b82f6;
+            --term-yellow: #eab308;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -33,19 +33,16 @@
             height: 100vh;
             width: 100vw;
             overflow: hidden; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 1.5rem; 
         }
 
         .dashboard-container {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            grid-template-rows: 1fr;
+            display: flex; 
             gap: 1.5rem;
-            width: calc(100vw - 3rem);
-            height: calc(100vh - 3rem);
+            width: 100%;
+            height: 100%;
             max-width: 1600px;
+            margin: 0 auto;
         }
 
         .panel {
@@ -56,8 +53,6 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            position: relative;
-            overflow: hidden;
         }
 
         .panel-header {
@@ -72,234 +67,152 @@
             gap: 0.5rem;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 0.5rem;
+            flex-shrink: 0;
         }
 
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+        /* Sidebar */
+        .sidebar { 
+            flex: 0 0 320px; 
+            justify-content: space-between; 
+            overflow-y: auto; 
         }
-
-        .identity {
-            text-align: center;
-            margin-top: 1rem;
-        }
-
+        .identity { text-align: center; margin-top: 1rem; }
         .avatar-container {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid var(--k8s-color);
-            margin: 0 auto 1.5rem auto;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(50, 108, 229, 0.2);
+            width: 120px; height: 120px; border-radius: 50%;
+            border: 3px solid var(--k8s-color); margin: 0 auto 1.5rem auto;
+            overflow: hidden; box-shadow: 0 0 20px rgba(50, 108, 229, 0.2);
         }
-
-        .avatar-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
+        .name { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .role { color: var(--go-color); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .location { color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;}
+        
+        /* Summary & Typing Animation */
+        .summary { 
+            font-size: 0.8rem; color: var(--text-muted); text-align: left; line-height: 1.6; 
+            background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); 
+            min-height: 130px; /* Reserves space so UI doesn't jump while typing */
         }
-
-        .name {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .role {
+        .pipeline-cursor {
             color: var(--go-color);
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
+            font-weight: bold;
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
         }
-
-        .location {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
+        
         .system-status {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid var(--success);
-            color: var(--success);
-            padding: 0.5rem;
-            border-radius: 6px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.8rem;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success);
+            color: var(--success); padding: 0.5rem; border-radius: 6px;
+            font-family: 'Fira Code', monospace; font-size: 0.8rem; text-align: center;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            margin-top: 1.5rem; flex-shrink: 0;
         }
-
         .pulse {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            width: 8px; height: 8px; background: var(--success); border-radius: 50%;
             animation: pulse-green 2s infinite;
         }
 
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto 1fr;
-            gap: 1.5rem;
+        .ingress-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.5rem; }
+        .ingress-links a { color: var(--text-muted); font-size: 1.5rem; transition: all 0.2s; }
+        .ingress-links a:hover { color: var(--text-main); transform: scale(1.1); }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1; min-width: 0; min-height: 0; 
+            display: flex; flex-direction: column; gap: 1.5rem; height: 100%;
         }
 
+        /* Terminal */
         .terminal {
-            grid-column: 1 / -1;
-            background: #000;
-            font-family: 'Fira Code', monospace;
-            border: 1px solid #333;
+            height: 35vh; min-height: 250px; background: #000; font-family: 'Fira Code', monospace;
+            border: 1px solid #333; display: flex; flex-direction: column; flex-shrink: 0; cursor: text;
         }
-
         .terminal-header {
-            background: #111;
-            padding: 0.5rem 1rem;
-            margin: -1.5rem -1.5rem 1rem -1.5rem;
-            display: flex;
-            gap: 0.5rem;
-            border-bottom: 1px solid #333;
+            background: #111; padding: 0.5rem 1rem; margin: -1.5rem -1.5rem 1rem -1.5rem;
+            display: flex; gap: 0.5rem; border-bottom: 1px solid #333; flex-shrink: 0;
         }
-
         .dot { width: 12px; height: 12px; border-radius: 50%; }
-        .dot.red { background: #ff5f56; }
-        .dot.yellow { background: #ffbd2e; }
-        .dot.green { background: #27c93f; }
-
-        .term-content {
-            color: #10b981;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 8px;
-            height: 15px;
-            background: #10b981;
-            animation: blink 1s step-end infinite;
-            vertical-align: middle;
-        }
-
-        .skills-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .skill-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(255,255,255,0.05);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.2s;
-        }
-
-        .skill-badge:hover {
-            border-color: var(--k8s-color);
-            background: rgba(50, 108, 229, 0.1);
-        }
-
-        .skill-badge i { font-size: 1.2rem; }
-        .go-icon { color: var(--go-color); }
-        .docker-icon { color: var(--docker-color); }
-        .k8s-icon { color: var(--k8s-color); }
-        .python-icon { color: var(--python-color); }
-
-        .pod-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            overflow-y: auto;
-        }
-
-        .pod-card {
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--k8s-color);
-            padding: 1rem;
-            border-radius: 6px;
-            transition: transform 0.2s;
-        }
+        .dot.red { background: #ff5f56; } .dot.yellow { background: #ffbd2e; } .dot.green { background: #27c93f; }
         
-        .pod-card:hover {
-            transform: translateX(5px);
-            border-left-color: var(--go-color);
+        .term-output {
+            flex-grow: 1; overflow-y: auto; color: var(--text-main); font-size: 0.85rem; line-height: 1.5;
+            padding-right: 1rem; white-space: pre; 
+        }
+        .term-input-line { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem; flex-shrink: 0; padding-bottom: 0.5rem;}
+        .prompt { color: var(--term-green); font-weight: 600; }
+        .term-input {
+            background: transparent; border: none; color: var(--text-main); font-family: 'Fira Code', monospace;
+            font-size: 0.85rem; flex-grow: 1; outline: none;
         }
 
-        .pod-card h4 {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
+        /* Bottom Row Panels */
+        .bottom-panels {
+            flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem;
         }
 
-        .pod-card p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 0.8rem;
+        /* Pods */
+        .pod-panel { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+        .pod-list { display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; padding-right: 0.5rem; padding-bottom: 0.5rem; flex: 1; min-height: 0; }
+        .pod-card {
+            background: rgba(0,0,0,0.2); border: 1px solid var(--border-color);
+            padding: 1rem; border-radius: 6px; transition: transform 0.2s; flex-shrink: 0;
+        }
+        .pod-card.active { border-left: 4px solid var(--success); }
+        .pod-card.completed { border-left: 4px solid var(--text-muted); opacity: 0.8; }
+        .pod-card:hover { transform: translateX(5px); }
+        .pod-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .pod-title { font-family: 'Fira Code', monospace; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+        .pod-status { font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; }
+        .status-active { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-completed { background: rgba(148, 163, 184, 0.2); color: var(--text-muted); }
+        .pod-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; font-family: 'Fira Code', monospace; }
+        .pod-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .action-btn {
+            background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main);
+            padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; cursor: pointer;
+            font-family: 'Fira Code', monospace; transition: all 0.2s;
+        }
+        .action-btn:hover { border-color: var(--go-color); color: var(--go-color); }
+
+        /* Tech Stack */
+        .stack-panel { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+        .skills-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; align-content: flex-start; overflow-y: auto; flex: 1; min-height: 0; padding-right: 0.5rem; padding-bottom: 0.5rem; }
+        .skill-badge {
+            display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.05);
+            padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1); font-family: 'Fira Code', monospace;
+            
+            /* 1. Add a smooth transition for all properties */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer; /* Changes the cursor to a pointing hand */
         }
 
-        .pod-tags {
-            display: flex;
-            gap: 0.5rem;
+        /* 2. Add the new hover state */
+        .skill-badge:hover {
+            transform: translateY(-3px) scale(1.05); /* Lifts and slightly enlarges the badge */
+            background: rgba(255, 255, 255, 0.12); /* Brightens the background */
+            border-color: rgba(255, 255, 255, 0.4); /* Highlights the border */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Adds a soft drop shadow */
+            color: #ffffff; /* Ensures the text is bright white */
         }
 
-        .pod-tags span {
-            font-size: 0.75rem;
-            padding: 0.2rem 0.5rem;
-            background: var(--bg-base);
-            border-radius: 4px;
-            color: var(--go-color);
-            font-family: 'Fira Code', monospace;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        ::-webkit-scrollbar-corner { background: transparent; }
 
-        .ingress-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: auto;
-            margin-bottom: auto;
-        }
-
-        .ingress-links a {
-            color: var(--text-muted);
-            font-size: 1.8rem;
-            transition: color 0.2s, transform 0.2s;
-        }
-
-        .ingress-links a:hover {
-            color: var(--text-main);
-            transform: scale(1.1);
-        }
-
-        @keyframes pulse-green {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
+        @keyframes pulse-green { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
+        /* Mobile View Fallbacks */
         @media (max-width: 1024px) {
-            body { overflow-y: auto; height: auto; padding: 1.5rem; }
-            .dashboard-container { grid-template-columns: 1fr; height: auto; width: 100%; }
-            .main-grid { grid-template-columns: 1fr; }
+            body { overflow-y: auto; height: auto; display: block; }
+            .dashboard-container { flex-direction: column; height: auto; }
+            .sidebar { flex: none; width: 100%; }
+            .terminal { height: 350px; }
+            .bottom-panels { grid-template-columns: 1fr; display: flex; flex-direction: column; }
+            .pod-panel, .stack-panel { height: 450px; flex-shrink: 0; }
+            .term-output { white-space: pre-wrap; } 
         }
     </style>
 </head>
@@ -308,138 +221,446 @@
     <div class="dashboard-container">
         
         <aside class="panel sidebar">
-            <div class="panel-header">
-                <i class="fa-solid fa-server"></i> Control Plane
-            </div>
-            
-            <div class="identity">
-                <div class="avatar-container">
-                    <img src="https://github.com/arzzon.png" alt="Arbaaz Khan">
+            <div>
+                <div class="panel-header"><i class="fa-solid fa-server"></i> Control Plane</div>
+                <div class="identity">
+                    <div class="avatar-container"><img src="https://github.com/arzzon.png" alt="Arbaaz Khan"></div>
+                    <h1 class="name">Arbaaz Khan</h1>
+                    <h2 class="role">Software Engineer</h2>
+                    <div class="location"><i class="fa-solid fa-location-dot"></i> <span id="dynamic-exp"></span> | Cloud-native Systems</div>
+                    <div class="summary">
+                        <span id="summary-text"></span><span class="pipeline-cursor">|</span>
+                    </div>
                 </div>
-                <h1 class="name">Arbaaz Khan</h1>
-                <h2 class="role">Backend & Cloud-Native Eng.</h2>
-                <div class="location">
-                    <i class="fa-solid fa-location-dot"></i> Hyderabad, IN
-                </div>
-            </div>
-
-            <div style="margin-top: 2rem; text-align: center;">
-                <div class="panel-header" style="justify-content: center;">Ingress Routes</div>
                 <div class="ingress-links">
                     <a href="https://github.com/arzzon" target="_blank"><i class="fa-brands fa-github"></i></a>
                     <a href="https://medium.com/@arbaazkhan083" target="_blank"><i class="fa-brands fa-medium"></i></a>
-                    <a href="mailto:arbaazkhan083@gmail.com"><i class="fa-solid fa-envelope"></i></a>
-                    <a href="https://stackoverflow.com/users/11330629/arbaaz"><i class="fa-brands fa-stack-overflow"></i></a>
+                    <a href="https://stackoverflow.com/users/11330629/arbaaz" target="_blank"><i class="fa-brands fa-stack-overflow"></i></a>
+                    <a href="mailto:your.arbaazkhan083@gmail.com"><i class="fa-solid fa-envelope"></i></a>
+                    <a href="https://www.instagram.com/arzzonfire/" target="_blank" rel="noopener noreferrer">
+    <i class="fa-brands fa-instagram"></i>
+</a>
                 </div>
             </div>
-
-            <div class="system-status">
-                <div class="pulse"></div> Cluster Healthy & Ready
-            </div>
+            <div class="system-status"><div class="pulse"></div> Multi-Cluster Healthy</div>
         </aside>
 
-        <main class="main-grid">
-            
+        <main class="main-content">  
             <div class="panel terminal">
                 <div class="terminal-header">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
+                    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
                 </div>
-                <div class="term-content">
-                    <div id="typewriter"></div>
-                    <span class="cursor"></span>
+                <div class="term-output" id="term-output">
+<span style="color: var(--term-blue); font-weight: 600;">Welcome to ArbaazOS v1.28.0 (GNU/Linux 5.15.0-aws x86_64)</span>
+
+ * <span style="color: var(--term-yellow);">Documentation:</span>  https://github.com/arzzon
+ * <span style="color: var(--term-yellow);">Message:</span>        Welcome! You're exploring Arzzon's portfolio. 
+ 
+<span style="color: var(--text-muted);">Execute commands to explore my infrastructure and experience.</span>
+<span style="color: var(--text-main); font-weight: bold;">Available Commands:</span>
+  <span style="color: var(--term-green);">kubectl get nodes</span>      - View deployment regions/work locations
+  <span style="color: var(--term-green);">kubectl get ns</span>         - View past & present companies
+  <span style="color: var(--term-green);">kubectl get deploy</span>     - View all projects/deployments
+  <span style="color: var(--term-green);">kubectl describe ...</span>   - Get deep technical details
+  <span style="color: var(--term-green);">clear</span>                  - Clear terminal output
+                </div>
+                <div class="term-input-line">
+                    <span class="prompt">arbaaz@master:~$</span>
+                    <input type="text" class="term-input" id="term-input" autocomplete="off" spellcheck="false" autofocus>
                 </div>
             </div>
 
-            <div class="panel">
-                <div class="panel-header">
-                    <i class="fa-solid fa-cubes"></i> Running Deployments
-                </div>
-                <div class="pod-list">
-                    
-                    <div class="pod-card">
-                        <h4>
-                            <span><i class="fa-solid fa-network-wired" style="color: var(--k8s-color);"></i> f5-container-ingress-services (CIS)</span>
-                            <span style="color: var(--success); font-size: 0.8rem;">Active</span>
-                        </h4>
-                        <p>Integrating F5 BIG-IP with Kubernetes and OpenShift for advanced ingress, load balancing, and multi-cluster traffic management.</p>
-                        <div class="pod-tags">
-                            <span>Go</span>
-                            <span>K8s</span>
-                            <span>BIG-IP</span>
+            <div class="bottom-panels">
+                
+                <div class="panel pod-panel">
+                    <div class="panel-header"><i class="fa-solid fa-cubes"></i> Deployments / Projects</div>
+                    <div class="pod-list" id="dynamic-pods">
                         </div>
-                    </div>
+                </div>
 
-                    <div class="pod-card">
-                        <h4>
-                            <span><i class="fa-solid fa-server" style="color: var(--go-color);"></i> f5-ipam-controller (BNK)</span>
-                            <span style="color: var(--success); font-size: 0.8rem;">Active</span>
-                        </h4>
-                        <p>Automated IP Address Management controller for Kubernetes environments, handling seamless IPv4/IPv6 allocations. With support for 3rd party integrations like Infoblox.</p>
-                        <div class="pod-tags">
-                            <span>Go</span>
-                            <span>IPAM</span>
-                            <span>Microservices</span>
+                <div class="panel stack-panel">
+                    <div class="panel-header" style="margin-bottom: 0.5rem;"><i class="fa-solid fa-layer-group"></i> Stack Configuration</div>
+                    <div class="skills-grid" id="dynamic-stack">
                         </div>
-                    </div>
+                </div>
 
-                </div>
-            </div>
-
-            <div class="panel">
-                <div class="panel-header">
-                    <i class="fa-solid fa-layer-group"></i> Container Images / Stack
-                </div>
-                <div class="skills-grid">
-                    <div class="skill-badge"><i class="fa-brands fa-golang go-icon"></i> Golang</div>
-                    <div class="skill-badge"><i class="fa-brands fa-python python-icon"></i> Python</div>
-                    <div class="skill-badge"><i class="fa-brands fa-docker docker-icon"></i> Docker</div>
-                    <div class="skill-badge"><i class="fa-solid fa-dharmachakra k8s-icon"></i> Kubernetes</div>
-                    <div class="skill-badge"><i class="fa-brands fa-redhat" style="color: #ee0000;"></i> OpenShift</div>
-                    <div class="skill-badge"><i class="fa-solid fa-network-wired" style="color: #a855f7;"></i> Microservices</div>
-                </div>
             </div>
 
         </main>
     </div>
 
     <script>
-        const lines = [
-            "kubectl get nodes -o wide",
-            "NAME                 STATUS   ROLES    AGE   VERSION",
-            "aws-k8s-master-01    Ready    master   45d   v1.28.0",
-            "aws-k8s-worker-01    Ready    <none>   45d   v1.28.0",
-            "",
-            "> initializing environment...",
-            "> pulling images: [golang:1.21, python:3.11, f5-k8s-bigip-ctlr]",
-            "> applying Custom resources...",
-            "> applying RBAC...",
-            "> reconciling state with arzzon's profile...",
-            "> ingress services up. traffic routed successfully."
-        ];
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- CORE DATA CONFIGURATION ---
+            // Edit this object to add new projects, skills, or update dates.
+            const appData = {
+                profile: {
+                    careerStart: "2018-06-04",
+                    summaryStr: "I build cloud-native systems that power modern infrastructure. From Kubernetes controllers, multi-cluster networking and intelligent IP management to high-performance backend services and APIs for web applications, I enjoy solving complex distributed systems challenges with clean, scalable engineering."
+                },
+                cluster: {
+                    nodes: [
+                        { name: "hyderabad-in", status: "Ready", roles: "control-plane", start: "2022-01-01", end: null, version: "v1.28.0" },
+                        { name: "pune-in", status: "Ready", roles: "compute", start: "2018-06-04", end: "2021-12-01", version: "v1.22.0" }
+                    ],
+                    namespaces: [
+                        { name: "f5-networks", status: "Active", start: "2022-01-01", end: null },
+                        { name: "abzooba", status: "Terminated", start: "2020-12-01", end: "2021-12-01" },
+                        { name: "calsoft-inc", status: "Terminated", start: "2018-06-04", end: "2020-12-01" }
+                    ]
+                },
+                projects: [
+                    {
+                        id: "f5-bigip-next-bnk", title: "f5-bigip-next-bnk",
+                        icon: "fa-solid fa-server", color: "var(--k8s-color)",
+                        status: "Running", ns: "f5-networks", node: "hyderabad-in",
+                        start: "2022-01-01", end: null,
+                        desc: "Developed dynamic IP management for Gateway API, VLANs, and SNAT pools using F5 IPAM Controller. Integrated Infoblox IPAM with Kubernetes workflows and implemented secure K8s Secrets management.",
+                        stack: "Go, Kubernetes, Infoblox IPAM",
+                        commits: "Latest commit: Added CIDR expansion support.\nCommit 2: Secured Infoblox API credentials via K8s Secrets.",
+                        actions: [
+                            { label: "Describe", cmd: "kubectl describe deploy f5-bigip-next-bnk" },
+                            { label: "Logs", cmd: "kubectl logs deploy/f5-bigip-next-bnk" }
+                        ]
+                    },
+                    {
+                        id: "f5-container-ingress", title: "f5-container-ingress",
+                        icon: "fa-solid fa-network-wired", color: "var(--go-color)",
+                        status: "Running", ns: "f5-networks", node: "hyderabad-in",
+                        start: "2022-01-01", end: null,
+                        desc: "Designed multi-cluster traffic management to load balance apps across K8s/OpenShift clusters using a Go-based controller. Implemented ratio-based traffic distribution and Next-Gen Routes migration.",
+                        stack: "Go, K8s Controllers, OpenShift",
+                        commits: "Latest commit: Built migration tooling for Next-Gen Routes.\nCommit 2: Implemented ratio-based traffic distribution logic.",
+                        actions: [
+                            { label: "Describe", cmd: "kubectl describe deploy f5-container-ingress" },
+                            { label: "Events", cmd: "kubectl get events -n f5-networks" }
+                        ]
+                    },
+                    {
+                        id: "abzooba-xpresso-ai", title: "abzooba-xpresso-ai",
+                        icon: "fa-brands fa-python", color: "var(--python-color)",
+                        status: "Completed", ns: "abzooba", node: "pune-in",
+                        start: "2020-12-01", end: "2021-12-01",
+                        desc: "Built backend services for an Enterprise MLOps platform. Implemented centralized log management using the EFK stack and developed log querying REST APIs.",
+                        stack: "Python, Flask, EFK Stack, Elasticsearch",
+                        commits: "Latest commit: Finalized log filtering APIs via Flask.\nCommit 2: Deployed Fluentd and Elasticsearch for centralized logging.",
+                        actions: [
+                            { label: "Describe", cmd: "kubectl describe deploy abzooba-xpresso-ai" },
+                            { label: "Metrics", cmd: "kubectl top pod abzooba-xpresso-ai" }
+                        ]
+                    },
+                    {
+                        id: "calsoft-hitachi-dc", title: "calsoft-hitachi-dc",
+                        icon: "fa-brands fa-java", color: "var(--java-color)",
+                        status: "Completed", ns: "calsoft-inc", node: "pune-in",
+                        start: "2018-06-04", end: "2020-12-01",
+                        desc: "Developed a Kubernetes-based data center orchestration platform for storage operations.",
+                        stack: "Java, Spring Boot, K8s Operators (Operator SDK)",
+                        commits: "Latest commit: Integrated custom storage CRDs via Operator SDK.",
+                        actions: [
+                            { label: "Describe", cmd: "kubectl describe deploy calsoft-hitachi-dc" },
+                            { label: "Logs", cmd: "kubectl logs deploy/calsoft-hitachi-dc" }
+                        ]
+                    },
+                    {
+                        id: "calsoft-vmware-telemetry", title: "calsoft-vmware-telemetry",
+                        icon: "fa-brands fa-golang", color: "var(--go-color)",
+                        status: "Completed", ns: "calsoft-inc", node: "pune-in",
+                        start: "2018-06-04", end: "2020-12-01",
+                        desc: "Built a network telemetry analytics system to process and visualize data stored in Elasticsearch. Included streaming and playing topology timelines.",
+                        stack: "Go (Beego), gRPC, WebSockets, Elasticsearch",
+                        commits: "Latest commit: Optimized telemetry streaming via gRPC.",
+                        actions: [
+                            { label: "Describe", cmd: "kubectl describe deploy calsoft-vmware-telemetry" },
+                            { label: "Telemetry", cmd: "kubectl exec deploy/calsoft-vmware-telemetry -- show lldp topology" }
+                        ]
+                    },
+                    {
+                        id: "calsoft-tigera-calico", title: "calsoft-tigera-calico",
+                        icon: "fa-brands fa-docker", color: "var(--docker-color)",
+                        status: "Completed", ns: "calsoft-inc", node: "pune-in",
+                        start: "2018-06-04", end: "2020-12-01",
+                        desc: "Contributed to Calico networking support for Windows containers. Handled Docker image builds and AWS cluster deployments via Kops/Kubeadm.",
+                        stack: "Kubernetes, Docker, AWS (Kops/Kubeadm)",
+                        commits: "Latest commit: Validated Calico networking on AWS Windows nodes.",
+                        actions: [
+                            { label: "Describe", cmd: "kubectl describe deploy calsoft-tigera-calico" },
+                            { label: "Network-Status", cmd: "kubectl exec deploy/calsoft-tigera-calico -- run network-tests" }
+                        ]
+                    },
+                    {
+                        id: "test", title: "test",
+                        icon: "fa-brands fa-docker", color: "var(--docker-color)",
+                        status: "Completed", ns: "calsoft-inc", node: "pune-in",
+                        start: "2018-06-04", end: "2020-12-01",
+                        desc: "Contributed to Calico networking support for Windows containers. Handled Docker image builds and AWS cluster deployments via Kops/Kubeadm.",
+                        stack: "Kubernetes, Docker, AWS (Kops/Kubeadm)",
+                        commits: "Latest commit: Validated Calico networking on AWS Windows nodes.",
+                        actions: [
+                            { label: "Describe", cmd: "kubectl describe deploy calsoft-tigera-calico" },
+                            { label: "Network-Status", cmd: "kubectl exec deploy/calsoft-tigera-calico -- run network-tests" }
+                        ]
+                    }
+                ],
+                stack: [
+                    { name: "Go", icon: "fa-brands fa-golang", color: "var(--go-color)" },
+                    { name: "Python", icon: "fa-brands fa-python", color: "var(--python-color)" },
+                    { name: "Java", icon: "fa-brands fa-java", color: "var(--java-color)" },
+                    { name: "Kubernetes", icon: "fa-solid fa-dharmachakra", color: "var(--k8s-color)" },
+                    { name: "OpenShift", icon: "fa-brands fa-redhat", color: "#ee0000" },
+                    { name: "Docker", icon: "fa-brands fa-docker", color: "var(--docker-color)" },
+                    { name: "K8s Operators", icon: "fa-solid fa-gear", color: "#a855f7" },
+                    { name: "K8s Controllers", icon: "fa-solid fa-microchip", color: "#3b82f6" },
+                    { name: "REST APIs", icon: "fa-solid fa-cloud", color: "#ec4899" },
+                    { name: "gRPC", icon: "fa-solid fa-network-wired", color: "#14b8a6" },
+                    { name: "WebSockets", icon: "fa-solid fa-plug", color: "#f97316" },
+                    { name: "Spring Boot", icon: "fa-solid fa-leaf", color: "#84cc16" },
+                    { name: "AWS", icon: "fa-brands fa-aws", color: "#ff9900" },
+                    { name: "OpenStack", icon: "fa-solid fa-server", color: "#ef4444" },
+                    { name: "Terraform", icon: "fa-solid fa-cubes", color: "#8b5cf6" },
+                    { name: "Elasticsearch", icon: "fa-solid fa-magnifying-glass", color: "#10b981" },
+                    { name: "EFK Stack", icon: "fa-solid fa-database", color: "#06b6d4" },
+                    { name: "MySQL", icon: "fa-solid fa-table", color: "#f59e0b" },
+                    { name: "Beego", icon: "fa-solid fa-code", color: "var(--go-color)" }
+                ]
+            };
 
-        let lineIndex = 0;
-        let charIndex = 0;
-        const speed = 20; 
-        const typewriterElement = document.getElementById('typewriter');
+            // --- UTILITY FUNCTIONS ---
+            
+            // Calculates formatted age/duration from start and end dates
+            function calculateAge(startStr, endStr) {
+                const start = new Date(startStr);
+                const end = endStr ? new Date(endStr) : new Date(); // Uses current time if null
+                let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+                if (months < 0) months = 0;
+                const y = Math.floor(months / 12);
+                const m = months % 12;
+                
+                if (y > 0 && m > 0) return endStr ? `${y}y${m}m` : `${y}y+`;
+                if (y > 0) return `${y}y`;
+                return `${m}m`;
+            }
 
-        function typeWriter() {
-            if (lineIndex < lines.length) {
-                if (charIndex < lines[lineIndex].length) {
-                    typewriterElement.innerHTML += lines[lineIndex].charAt(charIndex);
-                    charIndex++;
-                    setTimeout(typeWriter, speed);
-                } else {
-                    typewriterElement.innerHTML += "<br/>";
-                    lineIndex++;
-                    charIndex = 0;
-                    setTimeout(typeWriter, speed * 5); 
+            // Calculates absolute years of experience
+            function getYearsExp(startStr) {
+                const start = new Date(startStr);
+                const now = new Date();
+                const diffMs = now - start;
+                const years = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 365.25));
+                return `${years}+ Yrs Exp`;
+            }
+
+            // --- DYNAMIC RENDERING ---
+
+            // 1. Set Total Experience
+            document.getElementById('dynamic-exp').textContent = getYearsExp(appData.profile.careerStart);
+
+            // 2. Render Projects
+            const podsContainer = document.getElementById('dynamic-pods');
+            appData.projects.forEach(p => {
+                const isActive = p.status === 'Running';
+                const ageStr = calculateAge(p.start, p.end);
+                const statusClass = isActive ? 'status-active' : 'status-completed';
+                const cardClass = isActive ? 'active' : 'completed';
+                
+                let actionsHtml = '';
+                p.actions.forEach(a => {
+                    actionsHtml += `<button type="button" class="action-btn" data-cmd="${a.cmd}">${a.label}</button>`;
+                });
+
+                const html = `
+                    <div class="pod-card ${cardClass}">
+                        <div class="pod-header">
+                            <div class="pod-title"><i class="${p.icon}" style="color: ${p.color};"></i> ${p.title}</div>
+                            <div class="pod-status ${statusClass}">${p.status}</div>
+                        </div>
+                        <div class="pod-meta">ns: ${p.ns} | node: ${p.node} | age: ${ageStr}</div>
+                        <div class="pod-actions">${actionsHtml}</div>
+                    </div>`;
+                podsContainer.innerHTML += html;
+            });
+
+            // 3. Render Tech Stack
+            const stackContainer = document.getElementById('dynamic-stack');
+            appData.stack.forEach(s => {
+                stackContainer.innerHTML += `<div class="skill-badge"><i class="${s.icon}" style="color: ${s.color}"></i> ${s.name}</div>`;
+            });
+
+            // --- ANIMATION LOGIC ---
+            
+            // Simulates human typing with random typos and backspaces
+            // Simulates human typing with random typos and backspaces
+            async function typeSummary() {
+                const text = appData.profile.summaryStr;
+                const displayEl = document.getElementById('summary-text');
+                const mistakes = "abcdefghijklmnopqrstuvwxyz";
+                let currentText = "";
+                
+                for (let i = 0; i < text.length; i++) {
+                    // Increased chance of a typo to 8% (0.08)
+                    if (text[i].match(/[a-z]/i) && Math.random() < 0.08 && i < text.length - 1) {
+                        const wrongChar = mistakes[Math.floor(Math.random() * mistakes.length)];
+                        currentText += wrongChar;
+                        displayEl.textContent = currentText;
+                        
+                        // 1. PAUSE BEFORE CORRECTING: How long the wrong letter stays on screen
+                        await new Promise(r => setTimeout(r, 400)); // Increased to 400ms
+                        
+                        currentText = currentText.slice(0, -1); // backspace
+                        displayEl.textContent = currentText;
+                        
+                        // 2. PAUSE AFTER DELETE: How long it waits before typing the right letter
+                        await new Promise(r => setTimeout(r, 250)); // Increased to 250ms
+                    }
+                    
+                    currentText += text[i];
+                    displayEl.textContent = currentText;
+                    
+                    // 3. BASE TYPING SPEED: Random delay between each normal keystroke
+                    // Math.random() * 60 + 40 means a random speed between 40ms and 100ms
+                    const delay = Math.random() * 60 + 40; 
+                    await new Promise(r => setTimeout(r, delay));
                 }
             }
-        }
+            
+            // Start the typing animation
+            typeSummary();
 
-        window.onload = typeWriter;
+            // --- TERMINAL LOGIC ---
+            const outputEl = document.getElementById('term-output');
+            const inputEl = document.getElementById('term-input');
+
+            function printLine(text, isCommand = false) {
+                const div = document.createElement('div');
+                if (isCommand) {
+                    div.innerHTML = `\n<span class="prompt">arbaaz@master:~$</span> ${text}`;
+                } else {
+                    div.innerHTML = text;
+                }
+                outputEl.appendChild(div);
+                setTimeout(() => { outputEl.scrollTop = outputEl.scrollHeight; }, 10);
+            }
+
+            window.runCommand = function(cmd) {
+                inputEl.value = ''; 
+                printLine(cmd, true); 
+                const args = cmd.trim().split(' ').filter(Boolean); // Keep exact casing for comparison
+                const lowerArgs = cmd.trim().toLowerCase().split(' ').filter(Boolean);
+
+                if (args.length === 0) return;
+
+                if (lowerArgs[0] === 'clear') {
+                    outputEl.innerHTML = '';
+                    printLine(`<span style="color: var(--text-muted);">Terminal cleared. Type 'help' for commands.</span>`);
+                    return;
+                }
+
+                if (lowerArgs[0] === 'help') {
+                    printLine("Available commands:\n  kubectl get nodes\n  kubectl get ns\n  kubectl get deployments\n  kubectl describe deploy [name]\n  kubectl logs deploy/[name]\n  kubectl top pod [name]\n  kubectl get events -n [namespace]\n  clear");
+                    return;
+                }
+
+                if (lowerArgs[0] === 'kubectl') {
+                    
+                    // --- CUSTOM EXECS (Calsoft Button Responses) ---
+                    if (lowerArgs[1] === 'exec') {
+                        if (lowerArgs[2].includes('calsoft-vmware-telemetry') && cmd.includes('lldp')) {
+                            printLine(`Local Interface    Chassis Id          Port info          System Name\n---------------    ----------------    ----------------   ----------------\neth0               00:1c:73:a1:b2:01   Ethernet1/1        spine-01.dc1\neth1               00:1c:73:a1:b2:02   Ethernet1/2        spine-02.dc1\neth2               00:1c:73:a1:b2:03   Ethernet1/3        leaf-05.dc1`);
+                            return;
+                        }
+                        if (lowerArgs[2].includes('calsoft-tigera-calico') && cmd.includes('network-tests')) {
+                            printLine(`<span style="color: var(--term-yellow);">[INFO]</span> Starting network connectivity tests...\n<span style="color: var(--success);">[OK]</span> Calico CNI plugin loaded successfully.\n<span style="color: var(--success);">[OK]</span> BGP peering established with 10.0.0.1 (node-to-node mesh).\n<span style="color: var(--success);">[OK]</span> Pod IP 192.168.1.5 allocated from block 192.168.1.0/26.\n<span style="color: var(--success);">[OK]</span> Ping test: pod-a (192.168.1.5) -> pod-b (192.168.2.10) ... SUCCESS (1.2ms)\n<span style="color: var(--term-blue);">[INFO]</span> Network status: HEALTHY`);
+                            return;
+                        }
+                    }
+
+                    // --- GET RESOURCES ---
+                    if (lowerArgs[1] === 'get') {
+                        if (lowerArgs[2] === 'nodes' || lowerArgs[2] === 'no') {
+                            let out = "NAME".padEnd(20) + "STATUS".padEnd(10) + "ROLES".padEnd(15) + "AGE".padEnd(10) + "VERSION\n";
+                            appData.cluster.nodes.forEach(n => out += `${n.name.padEnd(20)}${n.status.padEnd(10)}${n.roles.padEnd(15)}${calculateAge(n.start, n.end).padEnd(10)}${n.version}\n`);
+                            printLine(out);
+                        } else if (lowerArgs[2] === 'namespaces' || lowerArgs[2] === 'ns') {
+                            let out = "NAME".padEnd(20) + "STATUS".padEnd(15) + "AGE\n";
+                            appData.cluster.namespaces.forEach(n => out += `${n.name.padEnd(20)}${n.status.padEnd(15)}${calculateAge(n.start, n.end)}\n`);
+                            printLine(out);
+                        } else if (lowerArgs[2] === 'deployments' || lowerArgs[2] === 'deploy' || lowerArgs[2] === 'po' || lowerArgs[2] === 'pods') {
+                            let out = "NAMESPACE".padEnd(15) + "NAME".padEnd(30) + "STATUS".padEnd(12) + "AGE\n";
+                            appData.projects.forEach(p => {
+                                out += `${p.ns.padEnd(15)}${p.id.padEnd(30)}${p.status.padEnd(12)}${calculateAge(p.start, p.end)}\n`;
+                            });
+                            printLine(out);
+                        } else if (lowerArgs[2] === 'events') {
+                            const ns = lowerArgs[4] || 'default';
+                            printLine(`LAST SEEN   TYPE      REASON              OBJECT                  MESSAGE\n2m          Normal    SuccessfulCreate    deployment/${ns}   Created pod: traffic-router-01`);
+                        } else {
+                            printLine(`Error: unknown resource type "${lowerArgs[2]}"`);
+                        }
+                    } 
+                    
+                    // --- DESCRIBE ---
+                    else if (lowerArgs[1] === 'describe') {
+                        const deployName = lowerArgs[3];
+                        const d = appData.projects.find(p => p.id === deployName);
+                        if (d) {
+                            printLine(`<span style="color: var(--term-yellow);">Name:</span>         ${deployName}\n<span style="color: var(--term-yellow);">Namespace:</span>    ${d.ns}\n<span style="color: var(--term-yellow);">Status:</span>       ${d.status}\n<span style="color: var(--term-yellow);">Age:</span>          ${calculateAge(d.start, d.end)}\n<span style="color: var(--term-yellow);">Description:</span>  ${d.desc}\n<span style="color: var(--term-yellow);">Tech Stack:</span>   ${d.stack}`);
+                        } else {
+                            printLine(`Error from server (NotFound): deployments.apps "${deployName}" not found`);
+                        }
+                    } 
+                    
+                    // --- LOGS ---
+                    else if (lowerArgs[1] === 'logs') {
+                        const target = lowerArgs[2] ? lowerArgs[2].replace('deploy/', '') : '';
+                        const d = appData.projects.find(p => p.id === target);
+                        if (d) {
+                            printLine(`<span style="color: #a855f7;">[git-sync]</span> Fetching recent history...\n${d.commits}`);
+                        } else {
+                            printLine(`Error: cannot find logs for "${target}"`);
+                        }
+                    } 
+                    
+                    // --- TOP (Metrics) ---
+                    else if (lowerArgs[1] === 'top') {
+                        const target = lowerArgs[3] || lowerArgs[2];
+                        if (appData.projects.find(p => p.id === target)) {
+                            printLine(`NAME\t\t\tCPU(cores)\tMEMORY(bytes)\n${target}\t12m\t\t45Mi`);
+                        } else {
+                            printLine(`Error: metrics not available for "${target}"`);
+                        }
+                    } else {
+                        printLine(`kubectl: unknown command "${lowerArgs[1]}"`);
+                    }
+                } else {
+                    printLine(`bash: ${lowerArgs[0]}: command not found`);
+                }
+            }
+
+            // --- EVENT ATTACHMENTS ---
+
+            // Keyboard input for Terminal
+            inputEl.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); 
+                    window.runCommand(this.value);
+                }
+            });
+
+            // Delegate button clicks (essential since buttons are generated dynamically)
+            document.body.addEventListener('click', function(e) {
+                if(e.target && e.target.classList.contains('action-btn')) {
+                    e.preventDefault();
+                    const cmd = e.target.getAttribute('data-cmd');
+                    if(cmd) window.runCommand(cmd);
+                }
+            });
+            
+            // Terminal focus helper
+            document.querySelector('.terminal').addEventListener('click', () => {
+                inputEl.focus();
+            });
+        });
     </script>
 </body>
 </html>
